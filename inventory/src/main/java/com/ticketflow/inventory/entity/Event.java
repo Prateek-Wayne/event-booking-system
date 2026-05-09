@@ -1,6 +1,6 @@
 package com.ticketflow.inventory.entity;
 
-import java.util.UUID;
+import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -40,4 +40,6 @@ public class Event {
     @JoinColumn(name = "venue_id")
     private Venue venue;
 
+    @Column(name = "ticket_price", nullable = false)
+    private BigDecimal ticketPrice;
 }

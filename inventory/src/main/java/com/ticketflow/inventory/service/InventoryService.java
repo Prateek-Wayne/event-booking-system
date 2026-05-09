@@ -32,7 +32,7 @@ public class InventoryService {
             throw new RuntimeException("Venue not found");
         }
         Event event = new Event(null, eventRequest.getName(), venue.get().getTotalCapacity(),
-                eventRequest.getLeftCapacity(), venue.get());
+                venue.get().getTotalCapacity(), venue.get(), eventRequest.getTicketPrice());
         return eventRepository.save(event);
 
     }
