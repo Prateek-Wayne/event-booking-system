@@ -15,6 +15,16 @@
       "projectName": "inventory",
       "args": "",
       "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "type": "java",
+      "name": "Spring Boot-BookingApplication<booking>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.ticketflow.booking.BookingApplication",
+      "projectName": "booking",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
     }
   ]
 }
