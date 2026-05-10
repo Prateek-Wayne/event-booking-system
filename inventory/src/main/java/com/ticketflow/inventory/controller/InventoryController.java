@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("/inventory")
@@ -24,6 +25,12 @@ public class InventoryController {
     public List<Event> getMethodName() {
         List<Event> allEvents = inventoryService.getALlEvents();
         return allEvents;
+    }
+
+    @GetMapping("/event/{eventId}")
+    public Event getMethodName(@PathVariable("eventId") Long eventId) {
+        Event event = inventoryService.getEvent(eventId);
+        return event;
     }
 
     @PostMapping("/addEvent")

@@ -2,11 +2,27 @@
   "configurations": [
     {
       "type": "java",
+      "name": "BookingApplication",
+      "request": "launch",
+      "mainClass": "com.ticketflow.booking.BookingApplication"
+    },
+    {
+      "type": "java",
       "name": "Spring Boot-InventoryApplication<inventory>",
       "request": "launch",
       "cwd": "${workspaceFolder}",
       "mainClass": "com.ticketflow.inventory.InventoryApplication",
       "projectName": "inventory",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "type": "java",
+      "name": "Spring Boot-BookingApplication<booking>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.ticketflow.booking.BookingApplication",
+      "projectName": "booking",
       "args": "",
       "envFile": "${workspaceFolder}/.env"
     }

@@ -42,4 +42,11 @@ public class InventoryService {
         return getAllEvents;
     }
 
+    public Event getEvent(Long eventId) {
+        Optional<Event> event = eventRepository.findById(eventId);
+        if (event == null)
+            throw new RuntimeException("not event exits with this id");
+        return event.get();
+    }
+
 }
