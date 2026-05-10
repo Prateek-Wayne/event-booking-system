@@ -47,8 +47,9 @@ public class InventoryService {
 
     public Event getEvent(Long eventId) {
         Optional<Event> event = eventRepository.findById(eventId);
-        if (event == null)
+        if (!event.isPresent())
             throw new RuntimeException("not event exits with this id");
+        log.info("Event ", event);
         return event.get();
     }
 
@@ -56,10 +57,15 @@ public class InventoryService {
         Event event = eventRepository.findById(eventId).orElse(null);
         if (event == null)
             throw new RuntimeException("event not found");
+        if (event.getLeftCapacity() < ticketsBooked)
+            throw new RuntimeException("no seats left");
         event.setLeftCapacity(event.getLeftCapacity() - ticketsBooked);
         eventRepository.saveAndFlush(event);
         log.info("Updated event capacity for event id: {} with tickets booked: {}", eventId, ticketsBooked);
-        return event;
+        eventRepository.flush();
+
+        return eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("event not found after update"));
 
     }
 

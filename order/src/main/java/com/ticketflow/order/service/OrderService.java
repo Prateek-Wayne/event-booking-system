@@ -29,12 +29,12 @@ public class OrderService {
         order.setTicketCount(bookingResponse.getTicketCount());
         order.setCustomerId(bookingResponse.getCustomerId());
         order.setEventId(bookingResponse.getEventId());
-        orderRepository.saveAndFlush(order);
 
         // Update Inventory
         inventoryServiceClient.updateInventory(order.getEventId(), order.getTicketCount());
         log.info("Inventory updated for event: {}, less tickets: {}", order.getEventId(), order.getTicketCount());
-
+        // save the order
+        orderRepository.saveAndFlush(order);
     }
 
 }

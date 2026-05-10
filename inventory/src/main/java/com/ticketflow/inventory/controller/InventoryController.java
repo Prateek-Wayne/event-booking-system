@@ -34,7 +34,7 @@ public class InventoryController {
         return event;
     }
 
-    @PutMapping("/inventory/event/{eventId}/capacity/{capacity}")
+    @PutMapping("/event/{eventId}/capacity/{capacity}")
     public Event updateEvent(@PathVariable("eventId") Long eventId, @PathVariable("capacity") Long capacity) {
         Event event = inventoryService.updateEventCapacity(eventId, capacity);
         return event;
