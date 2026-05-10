@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("/inventory")
@@ -22,14 +23,20 @@ public class InventoryController {
     private InventoryService inventoryService;
 
     @GetMapping("/events")
-    public List<Event> getMethodName() {
+    public List<Event> getEvents() {
         List<Event> allEvents = inventoryService.getALlEvents();
         return allEvents;
     }
 
     @GetMapping("/event/{eventId}")
-    public Event getMethodName(@PathVariable("eventId") Long eventId) {
+    public Event getEvent(@PathVariable("eventId") Long eventId) {
         Event event = inventoryService.getEvent(eventId);
+        return event;
+    }
+
+    @PutMapping("/event/{eventId}/capacity/{capacity}")
+    public Event updateEvent(@PathVariable("eventId") Long eventId, @PathVariable("capacity") Long capacity) {
+        Event event = inventoryService.updateEventCapacity(eventId, capacity);
         return event;
     }
 
@@ -44,5 +51,4 @@ public class InventoryController {
     public void addNewVenue(@RequestBody CreateVenueRequest venueRequestBody) {
         inventoryService.addVenue(venueRequestBody);
     }
-
 }

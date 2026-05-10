@@ -5,9 +5,10 @@ import lombok.Data;
 
 @Data
 public class InventoryResponse {
-    private Long eventId;
-    private String event;
+    private Long id; // was eventId
+    private String name; // was event
     private Long leftCapacity;
     private VenueResponse venue;
     private BigDecimal ticketPrice;
+    private Long totalCapacity;
 }

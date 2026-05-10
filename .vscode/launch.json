@@ -2,6 +2,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "OrderApplication",
+      "request": "launch",
+      "mainClass": "com.ticketflow.order.OrderApplication",
+      "projectName": "order"
+    },
+    {
+      "type": "java",
       "name": "BookingApplication",
       "request": "launch",
       "mainClass": "com.ticketflow.booking.BookingApplication"

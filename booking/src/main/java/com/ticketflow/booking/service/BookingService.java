@@ -34,6 +34,7 @@ public class BookingService {
         }
 
         InventoryResponse event = inventoryServiceClient.getInventory(bookingRequest.getEventId());
+        log.info("event got from inventory" + event.getId());
         if (event.getLeftCapacity() < bookingRequest.getTicketCount()) {
             throw new RuntimeException("no space left in event");
         }
@@ -50,7 +51,7 @@ public class BookingService {
         return BookingResponse.builder().customerId(customer.getId()).ticketCount(bookingRequest.getTicketCount())
                 .totalPrice(inventoryResponse.getTicketPrice()
                         .multiply(new java.math.BigDecimal(bookingRequest.getTicketCount())))
-                .eventId(inventoryResponse.getEventId())
+                .eventId(inventoryResponse.getId())
                 .build();
 
     }

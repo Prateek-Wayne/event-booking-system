@@ -11,6 +11,9 @@ import com.ticketflow.inventory.entity.Venue;
 import com.ticketflow.inventory.repository.EventRepository;
 import com.ticketflow.inventory.repository.VenueRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class InventoryService {
     @Autowired
@@ -44,9 +47,26 @@ public class InventoryService {
 
     public Event getEvent(Long eventId) {
         Optional<Event> event = eventRepository.findById(eventId);
-        if (event == null)
+        if (!event.isPresent())
             throw new RuntimeException("not event exits with this id");
+        log.info("Event ", event);
         return event.get();
+    }
+
+    public Event updateEventCapacity(Long eventId, Long ticketsBooked) {
+        Event event = eventRepository.findById(eventId).orElse(null);
+        if (event == null)
+            throw new RuntimeException("event not found");
+        if (event.getLeftCapacity() < ticketsBooked)
+            throw new RuntimeException("no seats left");
+        event.setLeftCapacity(event.getLeftCapacity() - ticketsBooked);
+        eventRepository.saveAndFlush(event);
+        log.info("Updated event capacity for event id: {} with tickets booked: {}", eventId, ticketsBooked);
+        eventRepository.flush();
+
+        return eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("event not found after update"));
+
     }
 
 }
