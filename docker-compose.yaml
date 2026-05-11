@@ -1,4 +1,70 @@
 services:
+
+  inventory:
+    build: ./inventory
+    environment:
+      SERVER_PORT: 8000
+      SPRING_APPLICATION_NAME: inventory
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ebs
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_DATASOURCE_NAME: ebs
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      - db
+    # ports:
+    #   - "8000:8000"
+  booking:
+    build: ./booking
+    environment:
+      SERVER_PORT: 8001
+      SPRING_APPLICATION_NAME: booking
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ebs
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_DATASOURCE_NAME: ebs
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      # inventory service
+      INVENTORY_SERVICE_URL: http://inventory:8000
+      # Kafka
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka-broker:29092
+      SPRING_KAFKA_TEMPLATE_DEFAULT_TOPIC: booking
+      SPRING_KAFKA_PRODUCER_KEY_SERIALIZER: org.apache.kafka.common.serialization.StringSerializer
+      SPRING_KAFKA_PRODUCER_VALUE_SERIALIZER: org.springframework.kafka.support.serializer.JsonSerializer
+    depends_on:
+      - db
+      - inventory
+    ports:
+      - "8000:8000"
+  order:
+    build: ./order
+    environment:
+      SERVER_PORT: 8002
+      SPRING_APPLICATION_NAME: order
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ebs
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_DATASOURCE_NAME: ebs
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      # inventory service
+      INVENTORY_SERVICE_URL: http://inventory:8000
+      # Kafka
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka-broker:29092
+      SPRING_KAFKA_CONSUMER_GROUP_ID: order-service
+      SPRING_KAFKA_TEMPLATE_DEFAULT_TOPIC: booking
+      SPRING_KAFKA_PRODUCER_KEY_SERIALIZER: org.apache.kafka.common.serialization.StringSerializer
+      SPRING_KAFKA_PRODUCER_VALUE_SERIALIZER: org.springframework.kafka.support.serializer.JsonSerializer
+      SPRING_KAFKA_CONSUMER_PROPERTY_SPRING_JSON_TYPE_MAPPING: bookingEvent:com.ticketflow.booking.dto.response.BookingResponse
+
+  apigateway:
+    build: ./apigateway
+    environment:
+      SPRING_APPLICATION_NAME: apigateway
+      SERVER_PORT: 8090
+      INVENTORY_SERVICE_URL: http://inventory:8000
+      BOOKING_SERVICE_URL: http://booking:8001
+    ports:
+      - "8090:8090"
   db:
     image: postgres:latest
     restart: always
