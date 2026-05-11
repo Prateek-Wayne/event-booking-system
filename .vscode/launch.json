@@ -32,6 +32,16 @@
       "projectName": "booking",
       "args": "",
       "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "type": "java",
+      "name": "Spring Boot-ApigatewayApplication<apigateway>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.ticketflow.apigateway.ApigatewayApplication",
+      "projectName": "apigateway",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
     }
   ]
 }
