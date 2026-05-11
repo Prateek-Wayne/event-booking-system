@@ -22,19 +22,26 @@ public class OrderService {
 
     @KafkaListener(topics = "booking", groupId = "order-service")
     public void orderEvent(BookingResponse bookingResponse) {
+        try {
+            log.info("ORDER_EVENT customerId={} eventId={} ticketCount={}", bookingResponse.getCustomerId(),
+                    bookingResponse.getEventId(), bookingResponse.getTicketCount());
 
-        log.info("Received order event: {}", bookingResponse);
-        Order order = new Order();
-        order.setTotalPrice(bookingResponse.getTotalPrice());
-        order.setTicketCount(bookingResponse.getTicketCount());
-        order.setCustomerId(bookingResponse.getCustomerId());
-        order.setEventId(bookingResponse.getEventId());
+            Order order = new Order();
+            order.setTotalPrice(bookingResponse.getTotalPrice());
+            order.setTicketCount(bookingResponse.getTicketCount());
+            order.setCustomerId(bookingResponse.getCustomerId());
+            order.setEventId(bookingResponse.getEventId());
 
-        // Update Inventory
-        inventoryServiceClient.updateInventory(order.getEventId(), order.getTicketCount());
-        log.info("Inventory updated for event: {}, less tickets: {}", order.getEventId(), order.getTicketCount());
-        // save the order
-        orderRepository.saveAndFlush(order);
+            inventoryServiceClient.updateInventory(order.getEventId(), order.getTicketCount());
+            orderRepository.saveAndFlush(order);
+
+            log.info("ORDER_EVENT success customerId={} eventId={} ticketCount={}", order.getCustomerId(),
+                    order.getEventId(), order.getTicketCount());
+        } catch (Exception exception) {
+            log.error("ORDER_EVENT failed customerId={} eventId={} ticketCount={}", bookingResponse.getCustomerId(),
+                    bookingResponse.getEventId(), bookingResponse.getTicketCount(), exception);
+            throw new RuntimeException(exception.getMessage(), exception);
+        }
     }
 
 }
