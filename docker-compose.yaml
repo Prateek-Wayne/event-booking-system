@@ -1,7 +1,7 @@
 services:
 
   inventory:
-    build: ./inventory
+    image: prateekwayne/inventory-service:latest
     environment:
       SERVER_PORT: 8000
       SPRING_APPLICATION_NAME: inventory
@@ -15,7 +15,7 @@ services:
     # ports:
     #   - "8000:8000"
   booking:
-    build: ./booking
+    image: prateekwayne/booking-service:latest
     environment:
       SERVER_PORT: 8001
       SPRING_APPLICATION_NAME: booking
@@ -37,7 +37,7 @@ services:
     ports:
       - "8000:8000"
   order:
-    build: ./order
+    image: prateekwayne/order-service:latest
     environment:
       SERVER_PORT: 8002
       SPRING_APPLICATION_NAME: order
@@ -57,7 +57,7 @@ services:
       SPRING_KAFKA_CONSUMER_PROPERTY_SPRING_JSON_TYPE_MAPPING: bookingEvent:com.ticketflow.booking.dto.response.BookingResponse
 
   apigateway:
-    build: ./apigateway
+    image: prateekwayne/apigateway-service:latest
     environment:
       SPRING_APPLICATION_NAME: apigateway
       SERVER_PORT: 8090
