@@ -19,6 +19,13 @@ services:
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_DATASOURCE_NAME: ebs
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    resources:
+      requests:
+        cpu: 700m
+        memory: 1Gi
+      limits:
+        cpu: 1000m
+        memory: 1Gi
 
   booking:
     image:
@@ -34,6 +41,14 @@ services:
       INVENTORY_SERVICE_URL: http://inventory:8000
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka-broker:9092
       SPRING_KAFKA_TEMPLATE_DEFAULT_TOPIC: booking
+    resources:
+      requests:
+        cpu: 700m
+        memory: 1Gi
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+
 
   order:
     image:
@@ -49,6 +64,14 @@ services:
       INVENTORY_SERVICE_URL: http://inventory:8000
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka-broker:9092
       SPRING_KAFKA_CONSUMER_GROUP_ID: order-service
+    resources:
+      requests:
+        cpu: 700m
+        memory: 1Gi
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+
 
   apigateway:
     image:
@@ -60,6 +83,13 @@ services:
       SPRING_APPLICATION_NAME: apigateway
       INVENTORY_SERVICE_URL: http://inventory:8000
       BOOKING_SERVICE_URL: http://booking:8001
+    resources:
+      requests:
+        cpu: 700m
+        memory: 1Gi
+      limits:
+        cpu: 1000m
+        memory: 1Gi
 
 postgresql:
   auth:
@@ -200,7 +230,7 @@ readinessProbe:
 
 # This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
 autoscaling:
-  enabled: false
+  enabled: true
   minReplicas: 1
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80

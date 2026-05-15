@@ -19,6 +19,8 @@ spec:
           image: "{{ .Values.services.apigateway.image.repository }}:{{ .Values.services.apigateway.image.tag }}"
           ports:
             - containerPort: {{ .Values.services.apigateway.port }}
+          resources:
+            {{- toYaml .Values.services.apigateway.resources | nindent 12 }}
           env:
             {{- range $k,$v := .Values.services.apigateway.env }}
             - name: {{ $k }}

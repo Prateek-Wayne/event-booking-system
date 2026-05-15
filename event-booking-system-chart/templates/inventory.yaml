@@ -19,6 +19,8 @@ spec:
           image: "{{ .Values.services.inventory.image.repository }}:{{ .Values.services.inventory.image.tag }}"
           ports:
             - containerPort: {{ .Values.services.inventory.port }}
+          resources:
+            {{- toYaml .Values.services.inventory.resources | nindent 12 }}
           env:
             {{- $releaseName := .Release.Name }}
             {{- range $k,$v := .Values.services.inventory.env }}

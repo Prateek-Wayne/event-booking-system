@@ -19,8 +19,12 @@ spec:
           image: "{{ .Values.services.order.image.repository }}:{{ .Values.services.order.image.tag }}"
           ports:
             - containerPort: {{ .Values.services.order.port }}
+          resources:
+            {{- toYaml .Values.services.order.resources | nindent 12 }}
           env:
             {{- $releaseName := .Release.Name }}
+            - name: SERVER_PORT
+              value: "{{ .Values.services.order.port }}"
             {{- range $k,$v := .Values.services.order.env }}
             {{- if eq $k "SPRING_DATASOURCE_URL" }}
             - name: SPRING_DATASOURCE_URL

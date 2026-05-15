@@ -19,6 +19,8 @@ spec:
           image: "{{ .Values.services.booking.image.repository }}:{{ .Values.services.booking.image.tag }}"
           ports:
             - containerPort: {{ .Values.services.booking.port }}
+          resources:
+            {{- toYaml .Values.services.booking.resources | nindent 12 }}
           env:
             {{- $releaseName := .Release.Name }}
             {{- range $k,$v := .Values.services.booking.env }}
