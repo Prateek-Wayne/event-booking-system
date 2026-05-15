@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "event-booking-system-chart.fullname" . }}-order
+  labels:
+    app: order
+spec:
+  replicas: {{ .Values.services.order.replicaCount }}
+  selector:
+    matchLabels:
+      app: order
+  template:
+    metadata:
+      labels:
+        app: order
+    spec:
+      containers:
+        - name: order
+          image: "{{ .Values.services.order.image.repository }}:{{ .Values.services.order.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.services.order.port }}
+          env:
+            {{- $releaseName := .Release.Name }}
+            {{- range $k,$v := .Values.services.order.env }}
+            {{- if eq $k "SPRING_DATASOURCE_URL" }}
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://{{ $releaseName }}-postgresql:5432/ebs"
+            {{- else }}
+            - name: {{ $k }}
+              value: {{ $v | quote }}
+            {{- end }}
+            {{- end }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.services.order.port }}
+      targetPort: {{ .Values.services.order.port }}
+  selector:
+    app: order

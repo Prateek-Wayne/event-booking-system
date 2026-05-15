@@ -5,6 +5,71 @@
 # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
 replicaCount: 1
 
+services:
+  inventory:
+    image:
+      repository: prateekwayne/inventory-service
+      tag: latest
+    replicaCount: 1
+    port: 8000
+    env:
+      SPRING_APPLICATION_NAME: inventory
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql:5432/ebs
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_DATASOURCE_NAME: ebs
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+  booking:
+    image:
+      repository: prateekwayne/booking-service
+      tag: latest
+    replicaCount: 1
+    port: 8001
+    env:
+      SPRING_APPLICATION_NAME: booking
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql:5432/ebs
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: password
+      INVENTORY_SERVICE_URL: http://inventory:8000
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka-broker:9092
+      SPRING_KAFKA_TEMPLATE_DEFAULT_TOPIC: booking
+
+  order:
+    image:
+      repository: prateekwayne/order-service
+      tag: latest
+    replicaCount: 1
+    port: 8002
+    env:
+      SPRING_APPLICATION_NAME: order
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql:5432/ebs
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: password
+      INVENTORY_SERVICE_URL: http://inventory:8000
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka-broker:9092
+      SPRING_KAFKA_CONSUMER_GROUP_ID: order-service
+
+  apigateway:
+    image:
+      repository: prateekwayne/apigateway-service
+      tag: latest
+    replicaCount: 1
+    port: 8090
+    env:
+      SPRING_APPLICATION_NAME: apigateway
+      INVENTORY_SERVICE_URL: http://inventory:8000
+      BOOKING_SERVICE_URL: http://booking:8001
+
+postgresql:
+  auth:
+    username: admin
+    password: password
+    database: ebs
+
+  primary:
+    persistence:
+      enabled: true
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
   repository: nginx

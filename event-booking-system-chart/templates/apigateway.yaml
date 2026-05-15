@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "event-booking-system-chart.fullname" . }}-apigateway
+  labels:
+    app: apigateway
+spec:
+  replicas: {{ .Values.services.apigateway.replicaCount }}
+  selector:
+    matchLabels:
+      app: apigateway
+  template:
+    metadata:
+      labels:
+        app: apigateway
+    spec:
+      containers:
+        - name: apigateway
+          image: "{{ .Values.services.apigateway.image.repository }}:{{ .Values.services.apigateway.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.services.apigateway.port }}
+          env:
+            {{- range $k,$v := .Values.services.apigateway.env }}
+            - name: {{ $k }}
+              value: {{ $v | quote }}
+            {{- end }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apigateway
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.services.apigateway.port }}
+      targetPort: {{ .Values.services.apigateway.port }}
+  selector:
+    app: apigateway
