@@ -49,7 +49,6 @@ services:
         cpu: 1000m
         memory: 1Gi
 
-
   order:
     image:
       repository: prateekwayne/order-service
@@ -71,7 +70,6 @@ services:
       limits:
         cpu: 1000m
         memory: 1Gi
-
 
   apigateway:
     image:
@@ -102,17 +100,18 @@ postgresql:
       enabled: true
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
-  repository: nginx
+  # No default global image repository to avoid deploying nginx unintentionally.
+  repository: ''
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: ''
 
 # This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
 # This is to override the chart name.
-nameOverride: ""
-fullnameOverride: ""
+nameOverride: ''
+fullnameOverride: ''
 
 # This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
 serviceAccount:
@@ -124,7 +123,7 @@ serviceAccount:
   annotations: {}
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template.
-  name: ""
+  name: ''
 
 # This is for setting Kubernetes Annotations to a Pod.
 # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
@@ -154,7 +153,7 @@ service:
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
   enabled: false
-  className: ""
+  className: ''
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
@@ -178,18 +177,18 @@ httpRoute:
   annotations: {}
   # Which Gateways this Route is attached to.
   parentRefs:
-  - name: gateway
-    sectionName: http
-    # namespace: default
+    - name: gateway
+      sectionName: http
+      # namespace: default
   # Hostnames matching HTTP header.
   hostnames:
-  - chart-example.local
+    - chart-example.local
   # List of rules and filters applied.
   rules:
-  - matches:
-    - path:
-        type: PathPrefix
-        value: /headers
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /headers
   #   filters:
   #   - type: RequestHeaderModifier
   #     requestHeaderModifier:
@@ -235,6 +234,19 @@ autoscaling:
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
+
+# Kafka and Zookeeper are disabled by default; enable only when you want an in-chart cluster.
+kafka:
+  enabled: true
+  image:
+    repository: confluentinc/cp-kafka
+    tag: '7.5.0'
+
+zookeeper:
+  enabled: true
+  image:
+    repository: confluentinc/cp-zookeeper
+    tag: '7.5.0'
 
 # Additional volumes on the output Deployment definition.
 volumes: []

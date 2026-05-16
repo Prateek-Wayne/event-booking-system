@@ -1,3 +1,4 @@
+{{- if .Values.zookeeper.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -18,7 +19,7 @@ spec:
     spec:
       containers:
         - name: zookeeper
-          image: confluentinc/cp-zookeeper:7.5.0
+          image: "{{ .Values.zookeeper.image.repository }}:{{ .Values.zookeeper.image.tag }}"
 
           ports:
             - containerPort: 2181
@@ -44,3 +45,4 @@ spec:
   ports:
     - port: 2181
       targetPort: 2181
+{{- end }}

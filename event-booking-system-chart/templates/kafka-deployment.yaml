@@ -1,3 +1,4 @@
+{{- if .Values.kafka.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,7 +15,7 @@ spec:
     spec:
       containers:
         - name: kafka
-          image: confluentinc/cp-kafka:7.5.0
+          image: "{{ .Values.kafka.image.repository }}:{{ .Values.kafka.image.tag }}"
           ports:
             - containerPort: 9092
           env:
@@ -45,3 +46,4 @@ spec:
   ports:
     - port: 9092
       targetPort: 9092
+{{- end }}
