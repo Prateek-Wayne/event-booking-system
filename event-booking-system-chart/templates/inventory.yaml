@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "event-booking-system-chart.fullname" . }}-inventory
+  labels:
+    app: inventory
+spec:
+  replicas: {{ .Values.services.inventory.replicaCount }}
+  selector:
+    matchLabels:
+      app: inventory
+  template:
+    metadata:
+      labels:
+        app: inventory
+    spec:
+      containers:
+        - name: inventory
+          image: "{{ .Values.services.inventory.image.repository }}:{{ .Values.services.inventory.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.services.inventory.port }}
+          resources:
+            {{- toYaml .Values.services.inventory.resources | nindent 12 }}
+          env:
+            {{- $releaseName := .Release.Name }}
+            {{- range $k,$v := .Values.services.inventory.env }}
+            {{- if eq $k "SPRING_DATASOURCE_URL" }}
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://{{ $releaseName }}-postgresql:5432/ebs"
+            {{- else }}
+            - name: {{ $k }}
+              value: {{ $v | quote }}
+            {{- end }}
+            {{- end }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inventory
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.services.inventory.port }}
+      targetPort: {{ .Values.services.inventory.port }}
+  selector:
+    app: inventory
