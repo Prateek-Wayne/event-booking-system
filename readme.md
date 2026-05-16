@@ -173,6 +173,35 @@ This project supports horizontal scaling for all core microservices:
 - Order Service
 - API Gateway
 
+
+```mermaid
+flowchart LR
+
+    Client --> APIGateway1
+    Client --> APIGateway2
+
+    APIGateway1 --> Booking1
+    APIGateway1 --> Booking2
+
+    APIGateway2 --> Booking1
+    APIGateway2 --> Booking2
+
+    Booking1 --> Kafka
+    Booking2 --> Kafka
+
+    Kafka --> Order1
+    Kafka --> Order2
+
+    Inventory1 --> PostgreSQL
+    Inventory2 --> PostgreSQL
+
+    Booking1 --> PostgreSQL
+    Booking2 --> PostgreSQL
+
+    Order1 --> PostgreSQL
+    Order2 --> PostgreSQL
+```
+
 Kubernetes replica scaling can be configured through Helm values.
 
 Example:
@@ -187,6 +216,7 @@ This allows the system to:
 - distribute load
 - improve fault tolerance
 - scale services independently
+
 
 ---
 
