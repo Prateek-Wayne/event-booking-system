@@ -1,73 +1,328 @@
 # Event Booking System
 
-Simple demo project showing a scalable, asynchronous event booking system.
+A scalable event-driven booking platform built using Spring Boot microservices, Kafka, Docker, Kubernetes, and Helm.
 
-## What this project is
-
-- A demonstration booking system built as small microservices.
-- Four services: `inventory`, `booking`, `order`, and `apigateway`.
-- Uses **Kafka** for asynchronous messaging between services.
-- Uses **PostgreSQL** for persistent storage.
-- Package and deploy with a Helm chart located in `event-booking-system-chart`.
-
-Key features:
+This project demonstrates:
 
 - Microservices architecture
-- Asynchronous communication (Kafka)
-- Scalability (Kubernetes + Helm + HPAs)
-- Separation of concerns and simple service contracts
+- Asynchronous communication using Kafka
+- API Gateway pattern
+- Kubernetes deployments with Helm
+- Horizontal scalability
+- Service-to-service communication
+- Containerized deployment workflow
 
-## Architecture (short)
+---
 
-- `inventory` — manages available items and stock
-- `booking` — handles booking requests and publishes events to Kafka
-- `order` — consumes booking events and creates orders
-- `apigateway` — single entry point for client requests
-- `kafka` — message broker used to decouple services
-- `postgresql` — relational storage for services
+# Architecture Overview
 
-I will add diagrams here later to show message flows and deployment topology.
+```mermaid
+flowchart LR
 
-## Run locally (quick)
+    Client --> APIGateway
 
-This repository includes a `docker-compose.yaml` to run all services, Kafka, and Postgres locally for development.
+    APIGateway --> Inventory
+    APIGateway --> Booking
+
+    Booking --> Kafka
+    Kafka --> Order
+
+    Inventory --> PostgreSQL
+    Booking --> PostgreSQL
+    Order --> PostgreSQL
+```
+
+---
+
+# Services
+
+## 1. Inventory Service
+
+Responsible for:
+
+- Venue management
+- Event management
+- Inventory availability
+
+### APIs
+
+```http
+POST /api/v1/inventory/addVenue
+POST /api/v1/inventory/addEvent
+
+GET  /api/v1/inventory/event/{id}
+GET  /api/v1/inventory/events
+```
+
+---
+
+## 2. Booking Service
+
+Responsible for:
+
+- Handling booking requests
+- Validating availability
+- Publishing booking events to Kafka
+
+### API
+
+```http
+POST /api/v1/booking
+```
+
+### Responsibilities
+
+When a booking request is received:
+
+1. Validates inventory availability
+2. Creates booking entry
+3. Publishes booking event asynchronously to Kafka
+
+---
+
+## 3. Order Service
+
+Responsible for:
+
+- Consuming booking events from Kafka
+- Creating downstream order records asynchronously
+
+This service demonstrates event-driven architecture and asynchronous processing.
+
+---
+
+## 4. API Gateway
+
+Acts as:
+
+- Single entry point for all client requests
+- Request router for backend microservices
+
+Example routes:
+
+```http
+/api/v1/inventory/**
+/api/v1/booking/**
+```
+
+---
+
+# Event-Driven Flow
+
+```text
+Client
+   ↓
+API Gateway
+   ↓
+Booking Service
+   ↓
+Kafka Topic
+   ↓
+Order Service
+```
+
+---
+
+# Technology Stack
+
+## Backend
+
+- Java
+- Spring Boot
+- Spring Cloud Gateway
+- Spring Data JPA
+
+## Messaging
+
+- Apache Kafka
+- Zookeeper
+
+## Database
+
+- PostgreSQL
+
+## DevOps / Infrastructure
+
+- Docker
+- Docker Compose
+- Kubernetes
+- Helm
+
+---
+
+# Key Features
+
+- Microservices-based architecture
+- Kafka-based asynchronous communication
+- Horizontal scalability support
+- Kubernetes-native deployment
+- Helm-based one-command deployment
+- Dockerized services
+- Internal service discovery
+- API Gateway pattern
+- Event-driven workflow
+
+---
+
+# Horizontal Scaling Support
+
+This project supports horizontal scaling for all core microservices:
+
+- Inventory Service
+- Booking Service
+- Order Service
+- API Gateway
+
+Kubernetes replica scaling can be configured through Helm values.
+
+Example:
+
+```yaml
+replicaCount: 3
+```
+
+This allows the system to:
+
+- handle increased traffic
+- distribute load
+- improve fault tolerance
+- scale services independently
+
+---
+
+# Run Locally Using Docker Compose
+
+## Start All Services
 
 ```bash
-# build and start everything locally
 docker-compose up --build
+```
 
-# stop
+## Stop Services
+
+```bash
 docker-compose down
 ```
 
-## Deploy to Kubernetes with Helm
+---
 
-Install the chart (example):
+# Kubernetes Deployment Using Helm
+
+## Install
 
 ```bash
 helm install my-release event-booking-system-chart
+```
 
-# to upgrade after changes
+## Upgrade
+
+```bash
 helm upgrade my-release event-booking-system-chart
+```
 
-# to uninstall
+## Uninstall
+
+```bash
 helm uninstall my-release
 ```
 
-Customize behavior via `values.yaml` in the chart — for example you can enable/disable in-chart Kafka or Zookeeper, adjust replica counts, and change image tags.
+---
 
-## Tech stack (for resume)
+# Kubernetes Components
 
-- Java / Spring Boot services
-- Apache Kafka
+The Helm chart deploys:
+
+- Inventory Service
+- Booking Service
+- Order Service
+- API Gateway
+- Kafka
+- Zookeeper
 - PostgreSQL
-- Docker & docker-compose
-- Kubernetes + Helm
 
-## Next steps
+---
 
-- Add architecture and sequence diagrams (message flows)
-- Add health checks and observability notes
-- Add CI/CD example for building and publishing images
+# Service Discovery
 
-If you want, I can add a simple diagram and a short `helm lint` run in the repo next.
+Services communicate internally using Kubernetes DNS.
+
+Examples:
+
+```text
+inventory:8000
+booking:8001
+kafka-broker:9092
+postgresql:5432
+```
+
+---
+
+# Kafka Integration
+
+Kafka is used to decouple services and enable asynchronous communication.
+
+### Producer
+
+- Booking Service
+
+### Consumer
+
+- Order Service
+
+### Benefits
+
+- Loose coupling
+- Better scalability
+- Improved resilience
+- Asynchronous processing
+
+---
+
+# Docker Images
+
+Docker images are published for all services.
+
+Example:
+
+```text
+prateekwayne/inventory-service
+prateekwayne/booking-service
+prateekwayne/order-service
+prateekwayne/apigateway-service
+```
+
+---
+
+# Future Improvements
+
+Planned enhancements:
+
+- Distributed tracing
+- Centralized logging
+- Retry & Dead Letter Queue handling
+- Prometheus + Grafana monitoring
+- CI/CD pipeline
+- Authentication & authorization
+- Rate limiting
+- Kubernetes Ingress support
+
+---
+
+# Learning Goals
+
+This project was built to practice:
+
+- Spring Boot microservices
+- Event-driven architecture
+- Kafka integration
+- Docker containerization
+- Kubernetes deployments
+- Helm chart packaging
+- Internal networking & service discovery
+- Horizontal scaling concepts
+
+---
+
+# Author
+
+Prateek Verma
