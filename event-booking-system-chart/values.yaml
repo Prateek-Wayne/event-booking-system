@@ -21,11 +21,11 @@ services:
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
     resources:
       requests:
-        cpu: 700m
-        memory: 1Gi
+        cpu: 250m
+        memory: 250Mi
       limits:
-        cpu: 1000m
-        memory: 1Gi
+        cpu: 250m
+        memory: 250Mi
 
   booking:
     image:
@@ -43,11 +43,11 @@ services:
       SPRING_KAFKA_TEMPLATE_DEFAULT_TOPIC: booking
     resources:
       requests:
-        cpu: 700m
-        memory: 1Gi
+        cpu: 250m
+        memory: 250Mi
       limits:
-        cpu: 1000m
-        memory: 1Gi
+        cpu: 250m
+        memory: 250Mi
 
   order:
     image:
@@ -65,11 +65,11 @@ services:
       SPRING_KAFKA_CONSUMER_GROUP_ID: order-service
     resources:
       requests:
-        cpu: 700m
-        memory: 1Gi
+        cpu: 250m
+        memory: 250Mi
       limits:
-        cpu: 1000m
-        memory: 1Gi
+        cpu: 250m
+        memory: 250Mi
 
   apigateway:
     image:
@@ -83,11 +83,11 @@ services:
       BOOKING_SERVICE_URL: http://booking:8001
     resources:
       requests:
-        cpu: 700m
-        memory: 1Gi
+        cpu: 250m
+        memory: 250Mi
       limits:
-        cpu: 1000m
-        memory: 1Gi
+        cpu: 250m
+        memory: 250Mi
 
 postgresql:
   auth:
@@ -98,20 +98,8 @@ postgresql:
   primary:
     persistence:
       enabled: true
-# This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
-image:
-  # No default global image repository to avoid deploying nginx unintentionally.
-  repository: ''
-  # This sets the pull policy for images.
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: ''
 
-# This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-imagePullSecrets: []
-# This is to override the chart name.
-nameOverride: ''
-fullnameOverride: ''
+# Per-service images are defined under `services` above; no global image defaults here.
 
 # This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
 serviceAccount:
