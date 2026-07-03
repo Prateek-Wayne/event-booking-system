@@ -2,6 +2,8 @@
 
 A scalable event-driven booking platform built using Spring Boot microservices, Kafka, Docker, Kubernetes, and Helm.
 
+<img src="https://pl1gw1frl4vz1ugg.public.blob.vercel-storage.com/ChatGPT%20Image%20Jul%203%2C%202026%2C%2008_16_22%20PM.png"/>
+
 This project demonstrates:
 
 - Microservices architecture
